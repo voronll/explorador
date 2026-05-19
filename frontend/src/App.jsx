@@ -4,7 +4,7 @@ import { apiDestinos } from './api/cliente'
 import BarraBusca from './components/BarraBusca'
 import PlanejamentoView from './components/PlanejamentoView'
 import Header from './components/Header'
-import { mockReversoGeocode } from './mocks/cidades'
+import { apiGeocoding } from './api/geocoding'
 import './App.css'
 
 export default function App() {
@@ -58,8 +58,10 @@ export default function App() {
   function aoCliqueMapa(lat, lng) {
     if (!cidadeAtiva || ocupado) return
 
-    const nome = mockReversoGeocode(lat, lng, cidadeAtiva.nome)
-    executarAcao(() => apiDestinos.criar({ name: nome, lat, lng }))
+    executarAcao(async () => {
+      const local = await apiGeocoding.reverso(lat, lng)
+      await apiDestinos.criar({ name: local.nome, lat, lng })
+    })
   }
 
   function aoRemover(id) {

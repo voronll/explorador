@@ -1,13 +1,28 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useRef, useState } from 'react'
-import { buscarCidadesMock, resolverCidadeMock } from '../mocks/cidades'
+import { apiGeocoding } from '../api/geocoding'
 import './BarraBusca.css'
+
+const DEBOUNCE_MS = 450
+const MIN_CARACTERES = 2
+
+function normalizar(texto) {
+  return texto
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+}
 
 export default function BarraBusca({ aoBuscar, erroExterno }) {
   const [termo, setTermo] = useState('')
   const [sugestoes, setSugestoes] = useState([])
   const [erroLocal, setErroLocal] = useState(null)
   const [listaAberta, setListaAberta] = useState(false)
+  const [buscando, setBuscando] = useState(false)
+  const [buscandoSugestoes, setBuscandoSugestoes] = useState(false)
   const containerRef = useRef(null)
+  const debounceRef = useRef(null)
 
   const erro = erroExterno ?? erroLocal
 
@@ -21,32 +36,69 @@ export default function BarraBusca({ aoBuscar, erroExterno }) {
     return () => document.removeEventListener('mousedown', aoClicarFora)
   }, [])
 
-  function aoAlterarTermo(valor) {
-    setTermo(valor)
-    setErroLocal(null)
-    const encontradas = buscarCidadesMock(valor)
-    setSugestoes(encontradas)
-    setListaAberta(valor.trim().length > 0 && encontradas.length > 0)
-  }
+  useEffect(() => {
+    clearTimeout(debounceRef.current)
 
-  function confirmarBusca(texto) {
+    const consulta = termo.trim()
+    if (consulta.length < MIN_CARACTERES) {
+      setSugestoes([])
+      setListaAberta(false)
+      setBuscandoSugestoes(false)
+      return
+    }
+
+    debounceRef.current = setTimeout(async () => {
+      setBuscandoSugestoes(true)
+      try {
+        const resultados = await apiGeocoding.buscar(consulta, 5)
+        setSugestoes(resultados)
+        setListaAberta(resultados.length > 0)
+      } catch {
+        setSugestoes([])
+        setListaAberta(false)
+      } finally {
+        setBuscandoSugestoes(false)
+      }
+    }, DEBOUNCE_MS)
+
+    return () => clearTimeout(debounceRef.current)
+  }, [termo])
+
+  async function confirmarBusca(texto) {
     const consulta = (texto ?? termo).trim()
     if (!consulta) {
       setErroLocal('Digite o nome de uma cidade.')
       return
     }
 
-    const cidade = resolverCidadeMock(consulta)
-    if (!cidade) {
-      setErroLocal('Cidade não encontrada. Tente São Paulo, Rio de Janeiro, Salvador…')
-      setListaAberta(false)
+    if (consulta.length < MIN_CARACTERES) {
+      setErroLocal('Digite pelo menos 2 caracteres.')
       return
     }
 
+    setBuscando(true)
     setErroLocal(null)
-    setTermo(cidade.nome)
-    setListaAberta(false)
-    aoBuscar(cidade)
+
+    try {
+      const resultados = await apiGeocoding.buscar(consulta, 5)
+      if (resultados.length === 0) {
+        setErroLocal('Nenhum local encontrado. Tente outro nome.')
+        setListaAberta(false)
+        return
+      }
+
+      const consultaNorm = normalizar(consulta)
+      const cidade =
+        resultados.find((item) => normalizar(item.nome) === consultaNorm) ?? resultados[0]
+
+      setTermo(cidade.nome)
+      setListaAberta(false)
+      aoBuscar(cidade)
+    } catch (err) {
+      setErroLocal(err.message)
+    } finally {
+      setBuscando(false)
+    }
   }
 
   function aoEnviar(evento) {
@@ -55,8 +107,18 @@ export default function BarraBusca({ aoBuscar, erroExterno }) {
   }
 
   function aoSelecionarSugestao(cidade) {
-    confirmarBusca(cidade.nome)
+    setTermo(cidade.nome)
+    setListaAberta(false)
+    setErroLocal(null)
+    aoBuscar(cidade)
   }
+
+  function aoAlterarTermo(valor) {
+    setTermo(valor)
+    setErroLocal(null)
+  }
+
+  const mostrarSugestoes = listaAberta && (sugestoes.length > 0 || buscandoSugestoes)
 
   return (
     <section className="home-busca" aria-label="Buscar cidade de destino">
@@ -84,36 +146,43 @@ export default function BarraBusca({ aoBuscar, erroExterno }) {
           <input
             type="search"
             className="barra-busca__input"
-            placeholder="Ex.: São Paulo, Rio de Janeiro…"
+            placeholder="Ex.: São Paulo, Curitiba, Salvador…"
             value={termo}
             onChange={(e) => aoAlterarTermo(e.target.value)}
             onFocus={() => sugestoes.length > 0 && setListaAberta(true)}
             autoComplete="off"
+            disabled={buscando}
             aria-label="Nome da cidade"
-            aria-expanded={listaAberta}
+            aria-expanded={mostrarSugestoes}
             aria-controls="sugestoes-cidades"
             aria-invalid={Boolean(erro)}
           />
-          <button type="submit" className="barra-busca__botao">
-            Buscar
+          <button type="submit" className="barra-busca__botao" disabled={buscando}>
+            {buscando ? 'Buscando…' : 'Buscar'}
           </button>
         </form>
 
-        {listaAberta && (
+        {mostrarSugestoes && (
           <ul id="sugestoes-cidades" className="barra-busca__sugestoes" role="listbox">
-            {sugestoes.map((cidade) => (
-              <li key={cidade.id} role="option">
-                <button
-                  type="button"
-                  className="barra-busca__sugestao"
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => aoSelecionarSugestao(cidade)}
-                >
-                  <span className="barra-busca__sugestao-nome">{cidade.nome}</span>
-                  <span className="barra-busca__sugestao-pais">Brasil</span>
-                </button>
-              </li>
-            ))}
+            {buscandoSugestoes && sugestoes.length === 0 ? (
+              <li className="barra-busca__status">Buscando…</li>
+            ) : (
+              sugestoes.map((cidade) => (
+                <li key={cidade.id} role="option">
+                  <button
+                    type="button"
+                    className="barra-busca__sugestao"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => aoSelecionarSugestao(cidade)}
+                  >
+                    <span className="barra-busca__sugestao-nome">{cidade.nome}</span>
+                    <span className="barra-busca__sugestao-pais">
+                      {cidade.rotulo || 'Brasil'}
+                    </span>
+                  </button>
+                </li>
+              ))
+            )}
           </ul>
         )}
 
@@ -122,6 +191,10 @@ export default function BarraBusca({ aoBuscar, erroExterno }) {
             {erro}
           </p>
         )}
+
+        <p className="barra-busca__credito">
+          Busca de cidades via OpenStreetMap (Nominatim)
+        </p>
       </div>
     </section>
   )
