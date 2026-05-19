@@ -1,6 +1,3 @@
 node_modules/
 .env
 dist/
-backend/data/*.db
-contexto.md
-PROGRESSO.md
