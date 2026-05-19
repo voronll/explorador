@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { apiDestinos } from './api/cliente'
 import FormularioDestino from './components/FormularioDestino'
 import ListaDestinos from './components/ListaDestinos'
+import ResumoRota from './components/ResumoRota'
+import MapaDestinos from './components/MapaDestinos'
 import './App.css'
 
 export default function App() {
@@ -9,6 +11,7 @@ export default function App() {
   const [carregando, setCarregando] = useState(true)
   const [ocupado, setOcupado] = useState(false)
   const [erro, setErro] = useState(null)
+  const [pontoSelecionado, setPontoSelecionado] = useState(null)
 
   const carregarDestinos = useCallback(async () => {
     setErro(null)
@@ -36,7 +39,14 @@ export default function App() {
   }
 
   function aoCriar(dados) {
-    return executarAcao(() => apiDestinos.criar(dados))
+    return executarAcao(async () => {
+      await apiDestinos.criar(dados)
+      setPontoSelecionado(null)
+    })
+  }
+
+  function aoCliqueMapa(lat, lng) {
+    setPontoSelecionado({ lat, lng })
   }
 
   function aoRemover(id) {
@@ -62,7 +72,18 @@ export default function App() {
         </div>
       )}
 
-      <FormularioDestino aoEnviar={aoCriar} desabilitado={ocupado} />
+      <MapaDestinos
+        destinos={destinos}
+        pontoSelecionado={pontoSelecionado}
+        aoCliqueMapa={aoCliqueMapa}
+        desabilitado={ocupado}
+      />
+
+      <FormularioDestino
+        aoEnviar={aoCriar}
+        desabilitado={ocupado}
+        coordenadasDoMapa={pontoSelecionado}
+      />
 
       <section className="route-section">
         <h2>Sua rota</h2>
@@ -77,6 +98,11 @@ export default function App() {
             desabilitado={ocupado}
           />
         )}
+      </section>
+
+      <section className="route-section">
+        <h2>Distância e tempo</h2>
+        <ResumoRota destinos={destinos} />
       </section>
     </div>
   )

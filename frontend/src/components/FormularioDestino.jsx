@@ -1,9 +1,18 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const formularioVazio = { name: '', lat: '', lng: '' }
 
-export default function FormularioDestino({ aoEnviar, desabilitado }) {
+export default function FormularioDestino({ aoEnviar, desabilitado, coordenadasDoMapa }) {
   const [formulario, setFormulario] = useState(formularioVazio)
+
+  useEffect(() => {
+    if (!coordenadasDoMapa) return
+    setFormulario((anterior) => ({
+      ...anterior,
+      lat: coordenadasDoMapa.lat.toFixed(6),
+      lng: coordenadasDoMapa.lng.toFixed(6),
+    }))
+  }, [coordenadasDoMapa])
 
   function aoAlterarCampo(e) {
     const { name, value } = e.target

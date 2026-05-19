@@ -189,3 +189,134 @@ button:disabled {
 .destination-actions button {
   min-width: 2.25rem;
 }
+
+.resumo-rota-vazio {
+  color: var(--text);
+  font-style: italic;
+}
+
+.resumo-rota h3 {
+  font-size: 1rem;
+  margin: 0 0 0.75rem;
+  color: var(--text-h);
+}
+
+.trechos-lista {
+  list-style: none;
+  margin: 0 0 1.25rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.trecho-item {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+.trecho-nomes {
+  color: var(--text-h);
+}
+
+.trecho-metricas {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.total-rota {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  margin-bottom: 0.5rem;
+}
+
+.total-rota .total-label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.total-rota strong {
+  font-size: 1.25rem;
+  color: var(--text-h);
+}
+
+.provedor-rota {
+  font-size: 0.8rem;
+  color: var(--text);
+  margin: 0;
+}
+
+.mapa-section {
+  margin-bottom: 2rem;
+}
+
+.mapa-section h2 {
+  margin-bottom: 0.35rem;
+}
+
+.mapa-dica {
+  font-size: 0.9rem;
+  color: var(--text);
+  margin: 0 0 0.75rem;
+}
+
+.mapa-container {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.mapa-leaflet {
+  height: 360px;
+  width: 100%;
+  z-index: 0;
+}
+
+.marcador-numero {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.marcador-numero span {
+  line-height: 1;
+}
+
+.marcador-preview {
+  background: #fff;
+  color: var(--accent);
+  border: 2px dashed var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.marcador-preview span {
+  line-height: 1;
+}
