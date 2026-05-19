@@ -1,0 +1,23 @@
+/* Leaflet aplica className no elemento <path> SVG */
+.leaflet-overlay-pane path.rota-gps-linha--desenhando {
+  filter: drop-shadow(0 0 4px rgba(255, 56, 92, 0.45));
+}
+
+.leaflet-overlay-pane path.rota-gps-linha--fluxo {
+  stroke-dasharray: 16 12;
+  animation: rota-marcha 1.25s linear infinite;
+  filter: drop-shadow(0 0 3px rgba(255, 56, 92, 0.35));
+}
+
+@keyframes rota-marcha {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .leaflet-overlay-pane path.rota-gps-linha--fluxo {
+    animation: none;
+    stroke-dasharray: none;
+  }
+}

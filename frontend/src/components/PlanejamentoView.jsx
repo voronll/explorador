@@ -1,6 +1,7 @@
 import ListaDestinos from './ListaDestinos'
 import ResumoRota from './ResumoRota'
 import MapaDestinos from './MapaDestinos'
+import { useResumoRota } from '../hooks/useResumoRota'
 import './PlanejamentoView.css'
 
 export default function PlanejamentoView({
@@ -14,6 +15,8 @@ export default function PlanejamentoView({
   aoSubir,
   aoDescer,
 }) {
+  const { resumo, carregando: carregandoRota, erro: erroRota } = useResumoRota(destinos)
+
   return (
     <div className="planejamento">
       <div className="planejamento__lista">
@@ -47,7 +50,12 @@ export default function PlanejamentoView({
 
         <section className="planejamento__secao">
           <h3 className="planejamento__secao-titulo">Distância e tempo</h3>
-          <ResumoRota destinos={destinos} />
+          <ResumoRota
+            destinos={destinos}
+            resumo={resumo}
+            carregando={carregandoRota}
+            erro={erroRota}
+          />
         </section>
       </div>
 
@@ -55,6 +63,8 @@ export default function PlanejamentoView({
         <MapaDestinos
           destinos={destinos}
           cidadeAtiva={cidade}
+          geometria={resumo?.geometria}
+          carregandoRota={carregandoRota}
           aoCliqueMapa={aoCliqueMapa}
           desabilitado={ocupado}
           painel

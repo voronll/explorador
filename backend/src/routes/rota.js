@@ -20,6 +20,7 @@ router.get('/resumo', async (req, res) => {
       return res.json({
         trechos: [],
         total: { distanciaMetros: 0, duracaoSegundos: 0 },
+        geometria: [],
         provedor: 'OSRM',
         mensagem: 'Adicione pelo menos dois destinos para calcular a rota.',
       })

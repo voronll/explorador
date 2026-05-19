@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import L from 'leaflet'
 import {
   MapContainer,
@@ -9,6 +9,7 @@ import {
   useMap,
   useMapEvents,
 } from 'react-leaflet'
+import RotaAnimada, { chaveGeometria } from './RotaAnimada'
 import 'leaflet/dist/leaflet.css'
 
 const CENTRO_BRASIL = [-14.235, -51.9253]
@@ -32,10 +33,15 @@ function CliqueNoMapa({ aoClique }) {
   return null
 }
 
-function AjustarVisao({ destinos, cidadeAtiva }) {
+function AjustarVisao({ destinos, cidadeAtiva, geometria }) {
   const mapa = useMap()
 
   useEffect(() => {
+    if (geometria?.length >= 2) {
+      mapa.fitBounds(geometria, { padding: [48, 48] })
+      return
+    }
+
     const pontos = destinos.map((d) => [d.lat, d.lng])
 
     if (pontos.length >= 2) {
@@ -59,7 +65,7 @@ function AjustarVisao({ destinos, cidadeAtiva }) {
     }
 
     mapa.setView(CENTRO_BRASIL, ZOOM_INICIAL)
-  }, [destinos, cidadeAtiva, mapa])
+  }, [destinos, cidadeAtiva, geometria, mapa])
 
   return null
 }
@@ -69,14 +75,24 @@ function centroInicial(cidadeAtiva) {
   return CENTRO_BRASIL
 }
 
+function obterLinhaRota(destinos, geometria, carregandoRota) {
+  if (geometria?.length >= 2) return geometria
+  if (carregandoRota || destinos.length < 2) return null
+  return destinos.map((d) => [d.lat, d.lng])
+}
+
 export default function MapaDestinos({
   destinos,
   cidadeAtiva,
+  geometria,
+  carregandoRota = false,
   aoCliqueMapa,
   desabilitado,
   painel = false,
 }) {
-  const linhaRota = destinos.map((d) => [d.lat, d.lng])
+  const linhaRota = obterLinhaRota(destinos, geometria, carregandoRota)
+  const rotaPelasRuas = geometria?.length >= 2
+  const idAnimacaoRota = useMemo(() => chaveGeometria(geometria), [geometria])
   const zoom = cidadeAtiva?.zoom ?? ZOOM_INICIAL
 
   const conteudoMapa = (
@@ -92,7 +108,7 @@ export default function MapaDestinos({
       />
 
       {!desabilitado && <CliqueNoMapa aoClique={aoCliqueMapa} />}
-      <AjustarVisao destinos={destinos} cidadeAtiva={cidadeAtiva} />
+      <AjustarVisao destinos={destinos} cidadeAtiva={cidadeAtiva} geometria={geometria} />
 
       {destinos.map((destino, indice) => (
         <Marker
@@ -110,20 +126,37 @@ export default function MapaDestinos({
         </Marker>
       ))}
 
-      {linhaRota.length >= 2 && (
-        <Polyline positions={linhaRota} pathOptions={{ color: '#ff385c', weight: 3 }} />
+      {linhaRota && rotaPelasRuas && (
+        <RotaAnimada
+          posicoes={linhaRota}
+          idAnimacao={idAnimacaoRota}
+          pelasRuas
+        />
+      )}
+      {linhaRota && !rotaPelasRuas && (
+        <Polyline
+          positions={linhaRota}
+          pathOptions={{
+            color: '#ff385c',
+            weight: 3,
+            opacity: 0.5,
+            dashArray: '8 8',
+          }}
+        />
       )}
     </MapContainer>
   )
 
+  const dicaMapa = desabilitado
+    ? 'Salvando parada…'
+    : carregandoRota
+      ? 'Traçando rota pelas ruas…'
+      : 'Clique no mapa para adicionar uma parada à rota.'
+
   if (painel) {
     return (
       <div className="mapa-section mapa-section--painel">
-        <p className="mapa-dica mapa-dica--painel">
-          {desabilitado
-            ? 'Salvando parada…'
-            : 'Clique no mapa para adicionar uma parada à rota.'}
-        </p>
+        <p className="mapa-dica mapa-dica--painel">{dicaMapa}</p>
         <div className="mapa-container mapa-container--painel">{conteudoMapa}</div>
       </div>
     )
@@ -132,11 +165,7 @@ export default function MapaDestinos({
   return (
     <section className="mapa-section">
       <h2>Mapa</h2>
-      <p className="mapa-dica">
-        {desabilitado
-          ? 'Aguarde a operação em andamento…'
-          : 'Clique no mapa para adicionar paradas.'}
-      </p>
+      <p className="mapa-dica">{dicaMapa}</p>
       <div className="mapa-container">{conteudoMapa}</div>
     </section>
   )
