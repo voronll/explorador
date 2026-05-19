@@ -8,13 +8,10 @@ export default function ListaDestinos({
   aoSubir,
   aoDescer,
   desabilitado,
+  mensagemVazia = 'Nenhum destino na rota ainda. Adicione o primeiro no mapa.',
 }) {
   if (destinos.length === 0) {
-    return (
-      <p className="empty-state">
-        Nenhum destino na rota ainda. Adicione o primeiro acima.
-      </p>
-    )
+    return <p className="empty-state">{mensagemVazia}</p>
   }
 
   return (

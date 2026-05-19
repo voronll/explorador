@@ -131,7 +131,7 @@ router.post('/', async (req, res) => {
       lat: Number(req.body.lat),
       lng: Number(req.body.lng),
       order,
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
     }
     const criado = await executar((cb) => destinos.insert(documento, cb))
     res.status(201).json(criado)
@@ -155,7 +155,7 @@ router.put('/:id', async (req, res) => {
             name: req.body.name.trim(),
             lat: Number(req.body.lat),
             lng: Number(req.body.lng),
-            updatedAt: new Date(),
+            updatedAt: new Date().toISOString(),
           },
         },
         {},

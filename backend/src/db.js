@@ -1,3 +1,5 @@
+require('./polyfill-node')
+
 const Datastore = require('nedb')
 const path = require('path')
 const fs = require('fs')

@@ -23,13 +23,6 @@ function criarIconeNumerado(numero) {
   })
 }
 
-const iconePreview = L.divIcon({
-  className: 'marcador-preview',
-  html: '<span>+</span>',
-  iconSize: [26, 26],
-  iconAnchor: [13, 13],
-})
-
 function CliqueNoMapa({ aoClique }) {
   useMapEvents({
     click(e) {
@@ -39,33 +32,102 @@ function CliqueNoMapa({ aoClique }) {
   return null
 }
 
-function AjustarVisao({ destinos, pontoSelecionado }) {
+function AjustarVisao({ destinos, cidadeAtiva }) {
   const mapa = useMap()
 
   useEffect(() => {
     const pontos = destinos.map((d) => [d.lat, d.lng])
-    if (pontoSelecionado) {
-      pontos.push([pontoSelecionado.lat, pontoSelecionado.lng])
-    }
 
-    if (pontos.length === 0) {
-      mapa.setView(CENTRO_BRASIL, ZOOM_INICIAL)
+    if (pontos.length >= 2) {
+      mapa.fitBounds(pontos, { padding: [48, 48] })
       return
     }
 
     if (pontos.length === 1) {
-      mapa.setView(pontos[0], 10)
+      mapa.setView(pontos[0], 13)
       return
     }
 
-    mapa.fitBounds(pontos, { padding: [48, 48] })
-  }, [destinos, pontoSelecionado, mapa])
+    if (cidadeAtiva?.bbox) {
+      mapa.fitBounds(cidadeAtiva.bbox, { padding: [32, 32] })
+      return
+    }
+
+    if (cidadeAtiva) {
+      mapa.setView([cidadeAtiva.lat, cidadeAtiva.lng], cidadeAtiva.zoom ?? 11)
+      return
+    }
+
+    mapa.setView(CENTRO_BRASIL, ZOOM_INICIAL)
+  }, [destinos, cidadeAtiva, mapa])
 
   return null
 }
 
-export default function MapaDestinos({ destinos, pontoSelecionado, aoCliqueMapa, desabilitado }) {
+function centroInicial(cidadeAtiva) {
+  if (cidadeAtiva) return [cidadeAtiva.lat, cidadeAtiva.lng]
+  return CENTRO_BRASIL
+}
+
+export default function MapaDestinos({
+  destinos,
+  cidadeAtiva,
+  aoCliqueMapa,
+  desabilitado,
+  painel = false,
+}) {
   const linhaRota = destinos.map((d) => [d.lat, d.lng])
+  const zoom = cidadeAtiva?.zoom ?? ZOOM_INICIAL
+
+  const conteudoMapa = (
+    <MapContainer
+      center={centroInicial(cidadeAtiva)}
+      zoom={zoom}
+      scrollWheelZoom
+      className={painel ? 'mapa-leaflet mapa-leaflet--painel' : 'mapa-leaflet'}
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+
+      {!desabilitado && <CliqueNoMapa aoClique={aoCliqueMapa} />}
+      <AjustarVisao destinos={destinos} cidadeAtiva={cidadeAtiva} />
+
+      {destinos.map((destino, indice) => (
+        <Marker
+          key={destino._id}
+          position={[destino.lat, destino.lng]}
+          icon={criarIconeNumerado(indice + 1)}
+        >
+          <Popup>
+            <strong>
+              {indice + 1}. {destino.name}
+            </strong>
+            <br />
+            {Number(destino.lat).toFixed(4)}, {Number(destino.lng).toFixed(4)}
+          </Popup>
+        </Marker>
+      ))}
+
+      {linhaRota.length >= 2 && (
+        <Polyline positions={linhaRota} pathOptions={{ color: '#ff385c', weight: 3 }} />
+      )}
+    </MapContainer>
+  )
+
+  if (painel) {
+    return (
+      <div className="mapa-section mapa-section--painel">
+        <p className="mapa-dica mapa-dica--painel">
+          {desabilitado
+            ? 'Salvando parada…'
+            : 'Clique no mapa para adicionar uma parada à rota.'}
+        </p>
+        <div className="mapa-container mapa-container--painel">{conteudoMapa}</div>
+      </div>
+    )
+  }
 
   return (
     <section className="mapa-section">
@@ -73,51 +135,9 @@ export default function MapaDestinos({ destinos, pontoSelecionado, aoCliqueMapa,
       <p className="mapa-dica">
         {desabilitado
           ? 'Aguarde a operação em andamento…'
-          : 'Clique no mapa para preencher latitude e longitude no formulário.'}
+          : 'Clique no mapa para adicionar paradas.'}
       </p>
-      <div className="mapa-container">
-        <MapContainer
-          center={CENTRO_BRASIL}
-          zoom={ZOOM_INICIAL}
-          scrollWheelZoom
-          className="mapa-leaflet"
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-
-          {!desabilitado && <CliqueNoMapa aoClique={aoCliqueMapa} />}
-          <AjustarVisao destinos={destinos} pontoSelecionado={pontoSelecionado} />
-
-          {destinos.map((destino, indice) => (
-            <Marker
-              key={destino._id}
-              position={[destino.lat, destino.lng]}
-              icon={criarIconeNumerado(indice + 1)}
-            >
-              <Popup>
-                <strong>
-                  {indice + 1}. {destino.name}
-                </strong>
-                <br />
-                {Number(destino.lat).toFixed(4)}, {Number(destino.lng).toFixed(4)}
-              </Popup>
-            </Marker>
-          ))}
-
-          {pontoSelecionado && (
-            <Marker
-              position={[pontoSelecionado.lat, pontoSelecionado.lng]}
-              icon={iconePreview}
-            />
-          )}
-
-          {linhaRota.length >= 2 && (
-            <Polyline positions={linhaRota} pathOptions={{ color: '#aa3bff', weight: 3 }} />
-          )}
-        </MapContainer>
-      </div>
+      <div className="mapa-container">{conteudoMapa}</div>
     </section>
   )
 }

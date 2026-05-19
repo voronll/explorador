@@ -1,17 +1,19 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useCallback, useEffect, useState } from 'react'
 import { apiDestinos } from './api/cliente'
-import FormularioDestino from './components/FormularioDestino'
-import ListaDestinos from './components/ListaDestinos'
-import ResumoRota from './components/ResumoRota'
-import MapaDestinos from './components/MapaDestinos'
+import BarraBusca from './components/BarraBusca'
+import PlanejamentoView from './components/PlanejamentoView'
+import Header from './components/Header'
+import { mockReversoGeocode } from './mocks/cidades'
 import './App.css'
 
 export default function App() {
+  const [modo, setModo] = useState('home')
+  const [cidadeAtiva, setCidadeAtiva] = useState(null)
   const [destinos, setDestinos] = useState([])
-  const [carregando, setCarregando] = useState(true)
+  const [carregando, setCarregando] = useState(false)
   const [ocupado, setOcupado] = useState(false)
   const [erro, setErro] = useState(null)
-  const [pontoSelecionado, setPontoSelecionado] = useState(null)
 
   const carregarDestinos = useCallback(async () => {
     setErro(null)
@@ -20,10 +22,13 @@ export default function App() {
   }, [])
 
   useEffect(() => {
+    if (modo !== 'planejamento') return
+
+    setCarregando(true)
     carregarDestinos()
       .catch((err) => setErro(err.message))
       .finally(() => setCarregando(false))
-  }, [carregarDestinos])
+  }, [modo, carregarDestinos])
 
   async function executarAcao(acao) {
     setOcupado(true)
@@ -38,15 +43,23 @@ export default function App() {
     }
   }
 
-  function aoCriar(dados) {
-    return executarAcao(async () => {
-      await apiDestinos.criar(dados)
-      setPontoSelecionado(null)
-    })
+  function aoBuscarCidade(cidade) {
+    setCidadeAtiva(cidade)
+    setModo('planejamento')
+    setErro(null)
+  }
+
+  function aoTrocarCidade() {
+    setModo('home')
+    setCidadeAtiva(null)
+    setErro(null)
   }
 
   function aoCliqueMapa(lat, lng) {
-    setPontoSelecionado({ lat, lng })
+    if (!cidadeAtiva || ocupado) return
+
+    const nome = mockReversoGeocode(lat, lng, cidadeAtiva.nome)
+    executarAcao(() => apiDestinos.criar({ name: nome, lat, lng }))
   }
 
   function aoRemover(id) {
@@ -59,51 +72,36 @@ export default function App() {
     return executarAcao(() => apiDestinos.reordenar(ids))
   }
 
+  const classeMain =
+    modo === 'home' ? 'app app--home' : 'app app--planejamento'
+
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1>Explorador</h1>
-        <p>Planeje sua rota de viagem — adicione destinos e defina a ordem.</p>
-      </header>
+    <>
+      <Header />
 
-      {erro && (
-        <div className="alert alert-error" role="alert">
-          {erro}
-        </div>
-      )}
+      <main className={classeMain}>
+        {erro && modo === 'planejamento' && (
+          <div className="alert alert-error alert--flutuante" role="alert">
+            {erro}
+          </div>
+        )}
 
-      <MapaDestinos
-        destinos={destinos}
-        pontoSelecionado={pontoSelecionado}
-        aoCliqueMapa={aoCliqueMapa}
-        desabilitado={ocupado}
-      />
-
-      <FormularioDestino
-        aoEnviar={aoCriar}
-        desabilitado={ocupado}
-        coordenadasDoMapa={pontoSelecionado}
-      />
-
-      <section className="route-section">
-        <h2>Sua rota</h2>
-        {carregando ? (
-          <p className="loading">Carregando destinos…</p>
+        {modo === 'home' ? (
+          <BarraBusca aoBuscar={aoBuscarCidade} />
         ) : (
-          <ListaDestinos
+          <PlanejamentoView
+            cidade={cidadeAtiva}
             destinos={destinos}
+            carregando={carregando}
+            ocupado={ocupado}
+            aoTrocarCidade={aoTrocarCidade}
+            aoCliqueMapa={aoCliqueMapa}
             aoRemover={aoRemover}
             aoSubir={(indice) => aoMover(indice, indice - 1)}
             aoDescer={(indice) => aoMover(indice, indice + 1)}
-            desabilitado={ocupado}
           />
         )}
-      </section>
-
-      <section className="route-section">
-        <h2>Distância e tempo</h2>
-        <ResumoRota destinos={destinos} />
-      </section>
-    </div>
+      </main>
+    </>
   )
 }

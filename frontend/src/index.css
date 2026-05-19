@@ -1,18 +1,26 @@
 :root {
   --text: #6b6375;
-  --text-h: #08060d;
+  --text-muted: #717171;
+  --text-h: #222222;
   --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
+  --border: #dddddd;
+  --code-bg: #f7f7f7;
+  --brand: #ff385c;
+  --accent: #ff385c;
+  --accent-bg: rgba(255, 56, 92, 0.08);
+  --accent-border: rgba(255, 56, 92, 0.35);
+  --social-bg: rgba(247, 247, 247, 0.8);
+  --header-bg: #ffffff;
+  --header-border: #ebebeb;
+  --header-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+  --layout-max: 1120px;
+  --layout-padding: 1.25rem;
+  --header-altura: 4.25rem;
   --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+    rgba(0, 0, 0, 0.12) 0 6px 16px, rgba(0, 0, 0, 0.08) 0 2px 4px;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --sans: 'DM Sans', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: 'DM Sans', system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
   font: 18px/145% var(--sans);
@@ -32,17 +40,22 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
+    --text: #b0b0b0;
+    --text-muted: #a0a0a0;
+    --text-h: #f7f7f7;
+    --bg: #121212;
+    --border: #3a3a3a;
+    --code-bg: #1e1e1e;
+    --brand: #ff5a5f;
+    --accent: #ff5a5f;
+    --accent-bg: rgba(255, 90, 95, 0.12);
+    --accent-border: rgba(255, 90, 95, 0.4);
+    --header-bg: #1a1a1a;
+    --header-border: #2e2e2e;
+    --header-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+    --social-bg: rgba(30, 30, 30, 0.8);
     --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+      rgba(0, 0, 0, 0.5) 0 6px 16px, rgba(0, 0, 0, 0.35) 0 2px 4px;
   }
 
   #social .button-icon {
@@ -55,10 +68,7 @@ body {
 }
 
 #root {
-  max-width: 720px;
   width: 100%;
-  margin: 0 auto;
-  padding: 2rem 1.25rem 3rem;
   min-height: 100svh;
   box-sizing: border-box;
 }
@@ -71,13 +81,9 @@ h2 {
 }
 
 h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+  margin: 0;
 }
 h2 {
   font-size: 24px;
