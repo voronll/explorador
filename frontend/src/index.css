@@ -9,6 +9,7 @@
   --accent: #ff385c;
   --accent-bg: rgba(255, 56, 92, 0.08);
   --accent-border: rgba(255, 56, 92, 0.35);
+  --accent-glow: 0 0 0 3px rgba(255, 56, 92, 0.2), 0 6px 22px rgba(255, 56, 92, 0.4);
   --social-bg: rgba(247, 247, 247, 0.8);
   --header-bg: #ffffff;
   --header-border: #ebebeb;
@@ -50,6 +51,7 @@
     --accent: #ff5a5f;
     --accent-bg: rgba(255, 90, 95, 0.12);
     --accent-border: rgba(255, 90, 95, 0.4);
+    --accent-glow: 0 0 0 3px rgba(255, 90, 95, 0.25), 0 6px 24px rgba(255, 90, 95, 0.45);
     --header-bg: #1a1a1a;
     --header-border: #2e2e2e;
     --header-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);

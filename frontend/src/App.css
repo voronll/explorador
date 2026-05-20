@@ -46,7 +46,8 @@
   color: var(--text-h);
 }
 
-.btn-primario {
+.btn-primario,
+.destination-form > button[type='submit'] {
   border: none;
   border-radius: 999px;
   background: var(--accent);
@@ -55,16 +56,42 @@
   font-size: 0.9rem;
   padding: 0.6rem 1.15rem;
   cursor: pointer;
-  transition: filter 0.2s;
+  transition:
+    box-shadow 0.25s ease,
+    transform 0.2s ease,
+    background 0.2s ease;
 }
 
-.btn-primario:hover:not(:disabled) {
-  filter: brightness(1.06);
+button.btn-primario:hover:not(:disabled),
+.destination-form > button[type='submit']:hover:not(:disabled) {
+  filter: none;
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: var(--accent-glow);
+  transform: translateY(-1px);
 }
 
-.btn-primario:disabled {
+button.btn-primario:active:not(:disabled),
+.destination-form > button[type='submit']:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 0 0 2px rgba(255, 56, 92, 0.15), 0 2px 12px rgba(255, 56, 92, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button.btn-primario:hover:not(:disabled),
+  button.btn-primario:active:not(:disabled),
+  .destination-form > button[type='submit']:hover:not(:disabled),
+  .destination-form > button[type='submit']:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+.btn-primario:disabled,
+.destination-form > button[type='submit']:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 .alert--flutuante {
@@ -162,19 +189,6 @@ button:disabled {
   cursor: not-allowed;
 }
 
-.destination-form > button[type='submit'] {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
-  padding: 0.6rem 1.25rem;
-  font-weight: 500;
-}
-
-.destination-form > button[type='submit']:hover:not(:disabled) {
-  filter: brightness(1.08);
-  background: var(--accent);
-}
-
 .btn-danger {
   color: #b91c1c;
   border-color: rgba(220, 38, 38, 0.35);
@@ -226,19 +240,10 @@ button:disabled {
 .destination-info {
   flex: 1;
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
 }
 
 .destination-info strong {
   color: var(--text-h);
-}
-
-.destination-coords {
-  font-family: var(--mono);
-  font-size: 0.8rem;
-  color: var(--text);
 }
 
 .destination-actions {
@@ -359,6 +364,16 @@ button:disabled {
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.mapa-section--editando .mapa-container--painel {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+  box-shadow: var(--accent-glow);
+}
+
+.mapa-section--sem-dica .mapa-container--painel {
+  flex: 1;
 }
 
 .mapa-dica--painel {

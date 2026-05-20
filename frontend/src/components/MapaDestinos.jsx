@@ -90,6 +90,7 @@ export default function MapaDestinos({
   desabilitado,
   painel = false,
   interativo = true,
+  destacado = false,
 }) {
   const linhaRota = obterLinhaRota(destinos, geometria, carregandoRota)
   const rotaPelasRuas = geometria?.length >= 2
@@ -119,13 +120,11 @@ export default function MapaDestinos({
           position={[destino.lat, destino.lng]}
           icon={criarIconeNumerado(indice + 1)}
         >
-          <Popup>
-            <strong>
-              {indice + 1}. {destino.name}
-            </strong>
-            <br />
-            {Number(destino.lat).toFixed(4)}, {Number(destino.lng).toFixed(4)}
-          </Popup>
+              <Popup>
+                <strong>
+                  {indice + 1}. {destino.name}
+                </strong>
+              </Popup>
         </Marker>
       ))}
 
@@ -150,16 +149,20 @@ export default function MapaDestinos({
     </MapContainer>
   )
 
-  const dicaMapa = desabilitado
-    ? 'Salvando parada…'
-    : carregandoRota
-      ? 'Traçando rota pelas ruas…'
-      : 'Clique no mapa para adicionar uma parada à rota.'
+  const dicaMapa = !interativo
+    ? null
+    : desabilitado
+      ? 'Salvando parada…'
+      : carregandoRota
+        ? 'Traçando rota pelas ruas…'
+        : 'Clique no mapa para adicionar uma parada à rota.'
 
   if (painel) {
     return (
-      <div className="mapa-section mapa-section--painel">
-        <p className="mapa-dica mapa-dica--painel">{dicaMapa}</p>
+      <div
+        className={`mapa-section mapa-section--painel${destacado ? ' mapa-section--editando' : ''}${dicaMapa ? '' : ' mapa-section--sem-dica'}`}
+      >
+        {dicaMapa && <p className="mapa-dica mapa-dica--painel">{dicaMapa}</p>}
         <div className="mapa-container mapa-container--painel">{conteudoMapa}</div>
       </div>
     )
@@ -168,7 +171,7 @@ export default function MapaDestinos({
   return (
     <section className="mapa-section">
       <h2>Mapa</h2>
-      <p className="mapa-dica">{dicaMapa}</p>
+      {dicaMapa && <p className="mapa-dica">{dicaMapa}</p>}
       <div className="mapa-container">{conteudoMapa}</div>
     </section>
   )

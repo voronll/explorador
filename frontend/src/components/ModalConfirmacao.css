@@ -1,0 +1,110 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  animation: modal-overlay-in 0.2s ease;
+}
+
+.modal {
+  width: 100%;
+  max-width: 22rem;
+  padding: 1.5rem;
+  border-radius: 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  animation: modal-in 0.22s ease;
+}
+
+.modal__titulo {
+  margin: 0 0 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.modal__mensagem {
+  margin: 0 0 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.modal__acoes {
+  display: flex;
+  gap: 0.65rem;
+  justify-content: flex-end;
+}
+
+.modal__btn {
+  border-radius: 999px;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.modal__btn--secundario {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+button.modal__btn--secundario:hover:not(:disabled) {
+  background: var(--code-bg);
+  border-color: var(--text-h);
+}
+
+.modal__btn--perigo {
+  border: none;
+  background: #dc2626;
+  color: #fff;
+}
+
+button.modal__btn--perigo:hover:not(:disabled) {
+  background: #dc2626;
+  border-color: transparent;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25), 0 4px 16px rgba(220, 38, 38, 0.35);
+}
+
+.modal__btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+@keyframes modal-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay,
+  .modal {
+    animation: none;
+  }
+}

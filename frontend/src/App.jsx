@@ -245,8 +245,14 @@ export default function App() {
             ) : (
               <ViagemDetalhe
                 viagem={viagemAtual}
-                aoVoltarLista={aoMinhasViagens}
                 aoNovaViagem={aoIrHome}
+                aoViagemAtualizada={(atualizada) => {
+                  setViagemAtual(atualizada)
+                  setViagens((lista) =>
+                    lista.map((v) => (v._id === atualizada._id ? atualizada : v)),
+                  )
+                }}
+                aoErro={setErro}
               />
             )}
           </>

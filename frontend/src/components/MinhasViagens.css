@@ -36,8 +36,7 @@
 }
 
 .viagem-card {
-  display: flex;
-  flex-direction: column;
+  position: relative;
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--bg);
@@ -51,10 +50,9 @@
 }
 
 .viagem-card__corpo {
-  flex: 1;
   display: block;
   width: 100%;
-  padding: 1.1rem 1.15rem;
+  padding: 1.1rem 3rem 1.1rem 1.15rem;
   border: none;
   background: transparent;
   text-align: left;
@@ -67,12 +65,51 @@
   background: var(--code-bg);
 }
 
+.viagem-card__excluir {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    color 0.2s,
+    background 0.2s,
+    box-shadow 0.2s;
+}
+
+.viagem-card__excluir svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+button.viagem-card__excluir:hover:not(:disabled) {
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+  border-color: transparent;
+}
+
+button.viagem-card__excluir:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
 .viagem-card__topo {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 0.75rem;
   margin-bottom: 0.35rem;
+  padding-right: 0.5rem;
 }
 
 .viagem-card__titulo {
@@ -102,18 +139,4 @@
   font-size: 0.8125rem;
   color: var(--accent);
   font-weight: 500;
-}
-
-.viagem-card__remover {
-  border: none;
-  border-top: 1px solid var(--border);
-  background: transparent;
-  padding: 0.65rem;
-  font-size: 0.8125rem;
-  color: #b91c1c;
-  cursor: pointer;
-}
-
-.viagem-card__remover:hover:not(:disabled) {
-  background: rgba(220, 38, 38, 0.06);
 }

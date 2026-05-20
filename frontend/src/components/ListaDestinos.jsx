@@ -1,7 +1,3 @@
-function formatarCoordenada(valor) {
-  return Number(valor).toFixed(4)
-}
-
 export default function ListaDestinos({
   destinos,
   aoRemover,
@@ -22,9 +18,6 @@ export default function ListaDestinos({
           <span className="destination-order">{indice + 1}</span>
           <div className="destination-info">
             <strong>{destino.name}</strong>
-            <span className="destination-coords">
-              {formatarCoordenada(destino.lat)}, {formatarCoordenada(destino.lng)}
-            </span>
           </div>
           {!somenteLeitura && (
             <div className="destination-actions">

@@ -138,18 +138,37 @@
   font-weight: 600;
   font-size: 1rem;
   padding: 0.85rem 1.5rem;
-  transition: filter 0.2s;
+  transition:
+    box-shadow 0.25s ease,
+    transform 0.2s ease,
+    background 0.2s ease;
 }
 
 .barra-busca__botao:disabled {
   opacity: 0.85;
   cursor: wait;
+  box-shadow: none;
+  transform: none;
 }
 
-.barra-busca__botao:hover {
-  filter: brightness(1.06);
+button.barra-busca__botao:hover:not(:disabled) {
+  filter: none;
   background: var(--accent);
   border-color: transparent;
+  box-shadow: var(--accent-glow);
+  transform: translateY(-1px);
+}
+
+button.barra-busca__botao:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 0 0 2px rgba(255, 56, 92, 0.15), 0 2px 12px rgba(255, 56, 92, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button.barra-busca__botao:hover:not(:disabled),
+  button.barra-busca__botao:active:not(:disabled) {
+    transform: none;
+  }
 }
 
 .barra-busca__sugestoes {

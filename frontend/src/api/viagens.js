@@ -22,4 +22,6 @@ export const apiViagens = {
   criar: (dados) =>
     requisicao('/api/viagens', { method: 'POST', body: JSON.stringify(dados) }),
   remover: (id) => requisicao(`/api/viagens/${id}`, { method: 'DELETE' }),
+  atualizar: (id, dados) =>
+    requisicao(`/api/viagens/${id}`, { method: 'PUT', body: JSON.stringify(dados) }),
 }

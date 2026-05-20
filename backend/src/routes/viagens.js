@@ -1,5 +1,6 @@
 const express = require('express')
 const { viagens } = require('../db')
+const { calcularRota } = require('../services/rotas')
 
 const router = express.Router()
 
@@ -101,6 +102,61 @@ router.post('/', async (req, res) => {
     res.status(201).json(criada)
   } catch (err) {
     res.status(500).json({ error: 'Erro ao salvar viagem', details: err.message })
+  }
+})
+
+function normalizarDestinos(lista) {
+  return [...lista]
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .map((destino, indice) => ({
+      name: destino.name.trim(),
+      lat: Number(destino.lat),
+      lng: Number(destino.lng),
+      order: indice,
+    }))
+}
+
+router.put('/:id', async (req, res) => {
+  const { destinos } = req.body ?? {}
+  const erros = validarDestinos(destinos)
+
+  if (erros.length) {
+    return res.status(400).json({ error: 'Dados inválidos', details: erros })
+  }
+
+  try {
+    const existente = await executar((cb) => viagens.findOne({ _id: req.params.id }, cb))
+    if (!existente) {
+      return res.status(404).json({ error: 'Viagem não encontrada' })
+    }
+
+    const paradasOrdenadas = normalizarDestinos(destinos)
+    let resumoRota = null
+
+    if (paradasOrdenadas.length >= 2) {
+      resumoRota = await calcularRota(paradasOrdenadas)
+    } else {
+      resumoRota = {
+        trechos: [],
+        total: { distanciaMetros: 0, duracaoSegundos: 0 },
+        geometria: [],
+        provedor: 'OSRM',
+      }
+    }
+
+    await executar((cb) =>
+      viagens.update(
+        { _id: req.params.id },
+        { $set: { destinos: paradasOrdenadas, resumoRota } },
+        {},
+        cb,
+      ),
+    )
+
+    const atualizada = await executar((cb) => viagens.findOne({ _id: req.params.id }, cb))
+    res.json(atualizada)
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao atualizar viagem', details: err.message })
   }
 })
 
