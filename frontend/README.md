@@ -1,16 +1,15 @@
-# React + Vite
+# Frontend — Explorador
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interface React (Vite) do projeto **Explorador**.
 
-Currently, two official plugins are available:
+A documentação completa — instalação, API, arquitetura e fluxos — está no **[README da raiz do repositório](../README.md)**.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Comandos rápidos
 
-## React Compiler
+```bash
+npm install
+npm run dev    # http://localhost:5173 (proxy /api → backend :3001)
+npm run build
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Em desenvolvimento, deixe `VITE_API_URL` vazio para usar o proxy definido em `vite.config.js`.
