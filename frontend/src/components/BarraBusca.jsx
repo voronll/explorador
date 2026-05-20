@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useRef, useState } from 'react'
 import { apiGeocoding } from '../api/geocoding'
+import IconeExplorador from './IconeExplorador'
 import './BarraBusca.css'
 
 const DEBOUNCE_MS = 450
@@ -142,6 +143,7 @@ export default function BarraBusca({ aoBuscar, erroExterno }) {
   return (
     <section className="home-busca" aria-label="Buscar cidade de destino">
       <div className="home-busca__intro">
+        <IconeExplorador className="home-busca__logo" />
         <h2 className="home-busca__titulo">Para onde você vai?</h2>
         <p className="home-busca__texto">
           Busque uma cidade e monte sua rota clicando nos pontos do mapa.

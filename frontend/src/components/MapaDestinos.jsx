@@ -96,13 +96,22 @@ export default function MapaDestinos({
   const rotaPelasRuas = geometria?.length >= 2
   const idAnimacaoRota = useMemo(() => chaveGeometria(geometria), [geometria])
   const zoom = cidadeAtiva?.zoom ?? ZOOM_INICIAL
+  const modoAdicionarParada = interativo && !desabilitado && Boolean(aoCliqueMapa)
+
+  const classesMapa = [
+    'mapa-leaflet',
+    painel && 'mapa-leaflet--painel',
+    modoAdicionarParada && 'mapa-leaflet--adicionar-parada',
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   const conteudoMapa = (
     <MapContainer
       center={centroInicial(cidadeAtiva)}
       zoom={zoom}
       scrollWheelZoom
-      className={painel ? 'mapa-leaflet mapa-leaflet--painel' : 'mapa-leaflet'}
+      className={classesMapa}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -152,10 +161,26 @@ export default function MapaDestinos({
   const dicaMapa = !interativo
     ? null
     : desabilitado
-      ? 'Salvando parada…'
+      ? null
       : carregandoRota
         ? 'Traçando rota pelas ruas…'
         : 'Clique no mapa para adicionar uma parada à rota.'
+
+  const overlaySalvando = interativo && desabilitado
+
+  function conteudoComOverlay(containerClassName) {
+    return (
+      <div className={containerClassName}>
+        {conteudoMapa}
+        {overlaySalvando && (
+          <div className="mapa-overlay" role="status" aria-live="polite" aria-busy="true">
+            <span className="mapa-overlay__spinner" aria-hidden />
+            <span className="mapa-overlay__texto">Salvando rota!</span>
+          </div>
+        )}
+      </div>
+    )
+  }
 
   if (painel) {
     return (
@@ -163,7 +188,7 @@ export default function MapaDestinos({
         className={`mapa-section mapa-section--painel${destacado ? ' mapa-section--editando' : ''}${dicaMapa ? '' : ' mapa-section--sem-dica'}`}
       >
         {dicaMapa && <p className="mapa-dica mapa-dica--painel">{dicaMapa}</p>}
-        <div className="mapa-container mapa-container--painel">{conteudoMapa}</div>
+        {conteudoComOverlay('mapa-container mapa-container--painel')}
       </div>
     )
   }
@@ -172,7 +197,7 @@ export default function MapaDestinos({
     <section className="mapa-section">
       <h2>Mapa</h2>
       {dicaMapa && <p className="mapa-dica">{dicaMapa}</p>}
-      <div className="mapa-container">{conteudoMapa}</div>
+      {conteudoComOverlay('mapa-container')}
     </section>
   )
 }

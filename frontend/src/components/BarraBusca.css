@@ -9,6 +9,14 @@
   margin-bottom: 2rem;
 }
 
+.home-busca__logo {
+  display: block;
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 1.25rem;
+  color: var(--brand);
+}
+
 .home-busca__titulo {
   margin: 0 0 0.5rem;
   font-size: clamp(1.75rem, 4vw, 2.5rem);
