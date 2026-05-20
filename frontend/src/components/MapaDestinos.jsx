@@ -89,6 +89,7 @@ export default function MapaDestinos({
   aoCliqueMapa,
   desabilitado,
   painel = false,
+  interativo = true,
 }) {
   const linhaRota = obterLinhaRota(destinos, geometria, carregandoRota)
   const rotaPelasRuas = geometria?.length >= 2
@@ -107,7 +108,9 @@ export default function MapaDestinos({
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
-      {!desabilitado && <CliqueNoMapa aoClique={aoCliqueMapa} />}
+      {interativo && !desabilitado && aoCliqueMapa && (
+        <CliqueNoMapa aoClique={aoCliqueMapa} />
+      )}
       <AjustarVisao destinos={destinos} cidadeAtiva={cidadeAtiva} geometria={geometria} />
 
       {destinos.map((destino, indice) => (

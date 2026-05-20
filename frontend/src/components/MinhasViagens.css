@@ -1,0 +1,119 @@
+.pagina-viagens__loading {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.pagina-viagens__vazio {
+  text-align: center;
+  padding: 3rem 1rem;
+  max-width: 28rem;
+  margin: 0 auto;
+}
+
+.pagina-viagens__vazio h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.35rem;
+  color: var(--text-h);
+}
+
+.pagina-viagens__vazio p {
+  margin: 0 0 1.5rem;
+  color: var(--text-muted);
+}
+
+.viagens-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .viagens-lista {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.viagem-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  overflow: hidden;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.viagem-card:hover {
+  border-color: var(--accent-border);
+  box-shadow: var(--shadow);
+}
+
+.viagem-card__corpo {
+  flex: 1;
+  display: block;
+  width: 100%;
+  padding: 1.1rem 1.15rem;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.viagem-card__corpo:hover {
+  background: var(--code-bg);
+}
+
+.viagem-card__topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.viagem-card__titulo {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-h);
+  line-height: 1.3;
+}
+
+.viagem-card__data {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.viagem-card__cidade {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.viagem-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.viagem-card__remover {
+  border: none;
+  border-top: 1px solid var(--border);
+  background: transparent;
+  padding: 0.65rem;
+  font-size: 0.8125rem;
+  color: #b91c1c;
+  cursor: pointer;
+}
+
+.viagem-card__remover:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.06);
+}

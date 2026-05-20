@@ -16,4 +16,11 @@ const destinos = new Datastore({
 
 destinos.ensureIndex({ fieldName: 'order' })
 
-module.exports = { destinos }
+const viagens = new Datastore({
+  filename: path.join(pastaDados, 'viagens.db'),
+  autoload: true,
+})
+
+viagens.ensureIndex({ fieldName: 'createdAt' })
+
+module.exports = { destinos, viagens }

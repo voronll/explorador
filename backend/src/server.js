@@ -7,6 +7,7 @@ require('dotenv').config()
 const rotasDestinos = require('./routes/destinos')
 const rotasRota = require('./routes/rota')
 const rotasGeocoding = require('./routes/geocoding')
+const rotasViagens = require('./routes/viagens')
 
 const app = express()
 const PORTA = process.env.PORT || 3001
@@ -21,6 +22,7 @@ app.get('/health', (req, res) => {
 app.use('/api/destinos', rotasDestinos)
 app.use('/api/rota', rotasRota)
 app.use('/api/geocoding', rotasGeocoding)
+app.use('/api/viagens', rotasViagens)
 
 app.listen(PORTA, () => {
   console.log(`Servidor rodando em http://localhost:${PORTA}`)

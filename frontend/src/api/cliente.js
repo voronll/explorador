@@ -28,4 +28,5 @@ export const apiDestinos = {
       method: 'PATCH',
       body: JSON.stringify({ ids }),
     }),
+  limparRascunho: () => requisicao('/api/destinos/rascunho', { method: 'DELETE' }),
 }

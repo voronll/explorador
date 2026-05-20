@@ -70,6 +70,16 @@ router.get('/', async (req, res) => {
   }
 })
 
+/** Remove todas as paradas do rascunho atual (planejamento em andamento). */
+router.delete('/rascunho', async (req, res) => {
+  try {
+    await executar((cb) => destinos.remove({}, { multi: true }, cb))
+    res.status(204).send()
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao limpar rascunho', details: err.message })
+  }
+})
+
 router.patch('/reordenar', async (req, res) => {
   const { ids } = req.body ?? {}
   if (!Array.isArray(ids) || ids.length === 0) {

@@ -14,6 +14,8 @@ export default function PlanejamentoView({
   aoRemover,
   aoSubir,
   aoDescer,
+  aoSalvar,
+  salvando,
 }) {
   const { resumo, carregando: carregandoRota, erro: erroRota } = useResumoRota(destinos)
 
@@ -27,9 +29,21 @@ export default function PlanejamentoView({
               Clique no mapa para adicionar paradas na sua rota.
             </p>
           </div>
-          <button type="button" className="btn-texto" onClick={aoTrocarCidade}>
-            Trocar cidade
-          </button>
+          <div className="planejamento__acoes">
+            {destinos.length > 0 && (
+              <button
+                type="button"
+                className="btn-primario"
+                onClick={() => aoSalvar(resumo)}
+                disabled={ocupado || salvando || carregando}
+              >
+                {salvando ? 'Salvando…' : 'Salvar viagem'}
+              </button>
+            )}
+            <button type="button" className="btn-texto" onClick={aoTrocarCidade}>
+              Trocar cidade
+            </button>
+          </div>
         </div>
 
         <section className="planejamento__secao">

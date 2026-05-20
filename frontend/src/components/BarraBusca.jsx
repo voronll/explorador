@@ -6,6 +6,21 @@ import './BarraBusca.css'
 const DEBOUNCE_MS = 450
 const MIN_CARACTERES = 2
 
+function IconeLocal() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+      <path
+        d="M12 21s7-4.35 7-10a7 7 0 1 0-14 0c0 5.65 7 10 7 10Z"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="12" cy="11" r="2.5" stroke="currentColor" strokeWidth="1.75" />
+    </svg>
+  )
+}
+
 function normalizar(texto) {
   return texto
     .trim()
@@ -47,8 +62,9 @@ export default function BarraBusca({ aoBuscar, erroExterno }) {
       return
     }
 
+    setBuscandoSugestoes(true)
+
     debounceRef.current = setTimeout(async () => {
-      setBuscandoSugestoes(true)
       try {
         const resultados = await apiGeocoding.buscar(consulta, 5)
         setSugestoes(resultados)
@@ -118,7 +134,10 @@ export default function BarraBusca({ aoBuscar, erroExterno }) {
     setErroLocal(null)
   }
 
-  const mostrarSugestoes = listaAberta && (sugestoes.length > 0 || buscandoSugestoes)
+  const termoValido = termo.trim().length >= MIN_CARACTERES
+  const carregandoAutocomplete = buscandoSugestoes && termoValido
+  const mostrarSugestoes =
+    carregandoAutocomplete || (listaAberta && sugestoes.length > 0)
 
   return (
     <section className="home-busca" aria-label="Buscar cidade de destino">
@@ -130,18 +149,19 @@ export default function BarraBusca({ aoBuscar, erroExterno }) {
       </div>
 
       <div className="home-busca__campo" ref={containerRef}>
-        <form className="barra-busca" onSubmit={aoEnviar}>
-          <span className="barra-busca__icone" aria-hidden>
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M12 21s7-4.35 7-10a7 7 0 1 0-14 0c0 5.65 7 10 7 10Z"
-                stroke="currentColor"
-                strokeWidth="1.75"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <circle cx="12" cy="11" r="2.5" stroke="currentColor" strokeWidth="1.75" />
-            </svg>
+        <form
+          className={`barra-busca${carregandoAutocomplete || buscando ? ' barra-busca--carregando' : ''}`}
+          onSubmit={aoEnviar}
+        >
+          <span
+            className={`barra-busca__icone${carregandoAutocomplete ? ' barra-busca__icone--loading' : ''}`}
+            aria-hidden={!carregandoAutocomplete}
+          >
+            {carregandoAutocomplete ? (
+              <span className="barra-busca__spinner" aria-label="Buscando cidades" />
+            ) : (
+              <IconeLocal />
+            )}
           </span>
           <input
             type="search"
@@ -149,23 +169,38 @@ export default function BarraBusca({ aoBuscar, erroExterno }) {
             placeholder="Ex.: São Paulo, Curitiba, Salvador…"
             value={termo}
             onChange={(e) => aoAlterarTermo(e.target.value)}
-            onFocus={() => sugestoes.length > 0 && setListaAberta(true)}
+            onFocus={() => (sugestoes.length > 0 || carregandoAutocomplete) && setListaAberta(true)}
             autoComplete="off"
             disabled={buscando}
             aria-label="Nome da cidade"
+            aria-busy={carregandoAutocomplete}
             aria-expanded={mostrarSugestoes}
             aria-controls="sugestoes-cidades"
             aria-invalid={Boolean(erro)}
           />
-          <button type="submit" className="barra-busca__botao" disabled={buscando}>
-            {buscando ? 'Buscando…' : 'Buscar'}
+          <button
+            type="submit"
+            className="barra-busca__botao"
+            disabled={buscando || carregandoAutocomplete}
+          >
+            {buscando ? (
+              <>
+                <span className="barra-busca__spinner barra-busca__spinner--botao" aria-hidden />
+                <span>Buscando…</span>
+              </>
+            ) : (
+              'Buscar'
+            )}
           </button>
         </form>
 
         {mostrarSugestoes && (
           <ul id="sugestoes-cidades" className="barra-busca__sugestoes" role="listbox">
-            {buscandoSugestoes && sugestoes.length === 0 ? (
-              <li className="barra-busca__status">Buscando…</li>
+            {carregandoAutocomplete ? (
+              <li className="barra-busca__status" role="status">
+                <span className="barra-busca__spinner barra-busca__spinner--lista" aria-hidden />
+                Buscando cidades…
+              </li>
             ) : (
               sugestoes.map((cidade) => (
                 <li key={cidade.id} role="option">

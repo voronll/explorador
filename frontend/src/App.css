@@ -24,6 +24,49 @@
   overflow: hidden;
 }
 
+.app--pagina {
+  max-width: var(--layout-max);
+  margin: 0 auto;
+  padding: 1.75rem var(--layout-padding) 3rem;
+  box-sizing: border-box;
+}
+
+.pagina-viagens__cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.pagina-viagens__cabecalho h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.btn-primario {
+  border: none;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.6rem 1.15rem;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.btn-primario:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+.btn-primario:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .alert--flutuante {
   position: fixed;
   top: calc(var(--header-altura) + 0.75rem);
