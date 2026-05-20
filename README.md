@@ -10,31 +10,8 @@ Desenvolvido como solução do desafio da **MM Tech** (Node + React + NeDB).
 
 ---
 
-## Capturas de tela
-
-### Página inicial
-
-Busca de cidade com autocomplete (Nominatim / OpenStreetMap).
-
-![Página inicial — “Para onde você vai?” com barra de busca](docs/screenshots/screenshot-3.png)
-
-### Planejamento da rota
-
-Paradas na lista, métricas por trecho e total (OSRM), mapa com rota pelas ruas e marcadores numerados.
-
-![Planejamento — Ponta Grossa com três paradas e resumo da rota](docs/screenshots/screenshot-1.png)
-
-### Minhas viagens
-
-Viagens salvas em cards com paradas, distância, tempo e exclusão.
-
-![Minhas viagens — lista de viagens em Curitiba e Ponta Grossa](docs/screenshots/screenshot-2.png)
-
----
-
 ## Índice
 
-- [Capturas de tela](#capturas-de-tela)
 - [Funcionalidades](#funcionalidades)
 - [Requisitos do desafio](#requisitos-do-desafio)
 - [Demonstração do fluxo](#demonstração-do-fluxo)
@@ -50,6 +27,7 @@ Viagens salvas em cards com paradas, distância, tempo e exclusão.
 - [APIs externas](#apis-externas)
 - [Scripts](#scripts)
 - [Limitações conhecidas](#limitações-conhecidas)
+- [Capturas de tela](#capturas-de-tela)
 - [Licença](#licença)
 
 ---
@@ -452,6 +430,29 @@ O componente `RotaAnimada` desenha o trajeto progressivamente e, em seguida, apl
 | `npm run lint` | ESLint |
 
 ---
+
+## Capturas de tela
+
+### Página inicial
+
+Busca de cidade com autocomplete (Nominatim / OpenStreetMap).
+
+![Página inicial — “Para onde você vai?” com barra de busca](docs/screenshots/screenshot-3.png)
+
+### Planejamento da rota
+
+Paradas na lista, métricas por trecho e total (OSRM), mapa com rota pelas ruas e marcadores numerados.
+
+![Planejamento — Ponta Grossa com três paradas e resumo da rota](docs/screenshots/screenshot-1.png)
+
+### Minhas viagens
+
+Viagens salvas em cards com paradas, distância, tempo e exclusão.
+
+![Minhas viagens — lista de viagens em Curitiba e Ponta Grossa](docs/screenshots/screenshot-2.png)
+
+---
+
 
 
 ## Limitações conhecidas

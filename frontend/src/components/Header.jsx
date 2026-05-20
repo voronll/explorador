@@ -27,7 +27,7 @@ export default function Header({ aoIrHome, aoMinhasViagens }) {
           <IconeExplorador />
           <div className="site-header__textos">
             <span className="site-header__titulo">Explorador</span>
-            <span className="site-header__subtitulo">Seu melhor guia</span>
+            <span className="site-header__subtitulo">Seu melhor guia de viagens!</span>
           </div>
         </button>
 
